@@ -5,20 +5,26 @@
   var render = function(article) {
     var template = Handlebars.compile($('#article-template').text());
 
-    article.daysAgo = parseInt((new Date() - new Date(article.publishedOn))/60/60/24/1000);
+    article.daysAgo = parseInt((new Date() - new Date(article.publishedOn)) / 60 / 60 / 24 / 1000);
     article.publishStatus = article.publishedOn ? 'published ' + article.daysAgo + ' days ago' : '(draft)';
     article.body = marked(article.body);
 
     return template(article);
   };
 
-  // COMMENT: What does this method do?  What is it's execution path?
+  // COMMENT(done): What does this method do?  What is it's execution path?
+  // sets the variable options and the variable template which is a compilation of handlebars.
+  // populates options within an array of HTML snippets created through the handlebars template.
+  // checks to see if the author-filter options have already been populated and only appends the new lists of authors if it has not yet been populated.
+  // checks to see if the category-filter options have already been populated. it'll append if it has not yet been populated.
+  //
   articleView.populateFilters = function() {
     var options,
       template = Handlebars.compile($('#option-template').text());
 
     // Example of using model method with FP, synchronous approach:
     // NB: This method is dependant on info being in the DOM. Only authors of shown articles are loaded.
+
     options = Article.allAuthors().map(function(author) { return template({val: author}); });
     if ($('#author-filter option').length < 2) { // Prevent duplication
       $('#author-filter').append(options);
@@ -37,13 +43,15 @@
     });
   };
 
-  // COMMENT: What does this method do?  What is it's execution path?
+  // COMMENT(done): What does this method do?  What is it's execution path?
+  // this is where we set the listeners for when a user selects an author or category.
   articleView.handleFilters = function() {
     $('#filters').on('change', 'select', function() {
       resource = this.id.replace('-filter', '');
       page('/' + resource + '/' + $(this).val().replace(/\W+/g, '+')); // Replace any/all whitespace with a +
     });
   };
+
   // articleView.handleAuthorFilter = function() {
   //   $('#author-filter').on('change', function() {
   //     if ($(this).val()) {
@@ -117,7 +125,11 @@
     $('#article-json').val(JSON.stringify(article) + ',');
   };
 
-  // COMMENT: What does this method do?  What is it's execution path?
+  // COMMENT(done): What does this method do?  What is it's execution path?
+  // this selects the dom element with the id of articles and shows it, then immediately hides its sibling elements.
+  // then it goes into that element and removes all article subelements.
+  // it then goes through its array of article objects and processes them through handlebars to get html which then gets attached to the dom.
+  // it then populates the list of authors and categories that can be selected as filters
   articleView.index = function(articles) {
     $('#articles').show().siblings().hide();
 
@@ -127,7 +139,8 @@
     });
 
     articleView.populateFilters();
-    // COMMENT: What does this method do?  What is it's execution path?
+    // COMMENT(done): What does this method do?  What is it's execution path?
+    // calls the handle filters method which adds listeners to the author and category lists.
     articleView.handleFilters();
 
     // DONE: Replace setTeasers with just the truncation logic, if needed:
