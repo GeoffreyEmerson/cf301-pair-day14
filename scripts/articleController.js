@@ -3,6 +3,8 @@
 
   Article.createTable();  // Ensure the database table is properly initialized
 
+  // The 'ctx' object is provided by Page.js when a route is matched and causes
+  //  a method to be called. 'ctx' is given to that method call as an argument.
   articlesController.index = function(ctx, next) {
     articleView.index(ctx.articles);
   };
@@ -36,7 +38,8 @@
 
     // Calling the function Article.findWhere passing in the arguments 'author',
     //  the author's name with all plus symbols replaced with a space, and the
-    //  authorData function as a callback.
+    //  authorData function as a callback. (NOTE: This was already explained in
+    //  the last assignment.)
     Article.findWhere('author', ctx.params.authorName.replace('+', ' '), authorData);
   };
 
